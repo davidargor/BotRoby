@@ -1,5 +1,7 @@
 # Software configuration
 
+[Italiano](README_it.md)
+
 The Raspberry Pi handles the higher-level logic and communicates with the STM-Nucleo board through an SPI connection.
 
 A headless version of the operating system was installed (Raspbian Lite).
@@ -129,4 +131,3 @@ Assumption: the Raspberry Pi IP, as configured above, is `192.168.4.1`.
 
 - Status: `sudo systemctl status robot-web.service`
 - Real-time logs: `sudo journalctl -u robot-web.service -f`
-

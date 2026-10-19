@@ -1,5 +1,7 @@
 # The board for connecting the STM Nucleo and the Raspberry Pi
 
+[Italiano](README_it.md)
+
 To make it easy to connect the STM32 Nucleo microcontroller board to the Raspberry Pi, a perfboard was used with the following components installed:
 - a pair of female headers to accommodate the Nucleo pins,
 - a male connector to which a flat ribbon cable is attached, connecting it to the Raspberry Pi,

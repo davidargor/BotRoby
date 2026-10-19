@@ -1,5 +1,7 @@
 # Power supply and charging
 
+[Italiano](README_it.md)
+
 The power supply module consists of two parts:
 - one responsible for charging the battery
 - a pair of step-down modules to power the microcontroller and microprocessor boards (two are used to guarantee a 3A peak current per board)

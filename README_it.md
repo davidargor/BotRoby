@@ -13,11 +13,11 @@ robot, consultare le guide e le limitazioni note del firmware.
 
 ## Guide e componenti
 
-- [Configurazione e controllo da Raspberry Pi](RPi/README.md)
-- [Firmware SPI per STM32 e controllo motori](arduino/README.md)
-- [Alimentazione e ricarica](Hardware/Power/README.md)
-- [Driver dei motori](Hardware/Motor_Drivers/README.md)
-- [Scheda di collegamento STM32 Nucleo–Raspberry Pi](Hardware/STM32-RPi_board/README.md)
+- [Configurazione e controllo da Raspberry Pi](RPi/README_it.md)
+- [Firmware SPI per STM32 e controllo motori](arduino/README_it.md)
+- [Alimentazione e ricarica](Hardware/Power/README_it.md)
+- [Driver dei motori](Hardware/Motor_Drivers/README_it.md)
+- [Scheda di collegamento STM32 Nucleo–Raspberry Pi](Hardware/STM32-RPi_board/README_it.md)
 
 ## Stato del progetto
 

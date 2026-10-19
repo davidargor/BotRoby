@@ -1,5 +1,7 @@
 # Motor management
 
+[Italiano](README_it.md)
+
 To drive the 4 DC motors rated at 6V, two **DRV8833** modules were used. Both modules receive power directly from the pair of 3.7V batteries (for a total of 7.4V).
 
 ## DRV8833 module

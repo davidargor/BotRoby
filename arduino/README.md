@@ -1,5 +1,7 @@
 # SPI slave firmware
 
+[Italiano](README_it.md)
+
 This folder contains the firmware that receives SPI commands and translates them
 into PWM outputs for the four motors. The guide describes the behavior of the
 current code and the points to modify in order to add commands or new features.
@@ -180,4 +182,3 @@ same time.
 If the new peripheral requires more data or a different frame length, adding a
 `case` alone is not enough: `BUFFER_SIZE`, HAL reception, byte interpretation,
 and the master-side protocol must all be updated together.
-
