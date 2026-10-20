@@ -2,6 +2,8 @@
 
 [Italiano](README_it.md)
 
+![BotRoby](BotRoby.jpg)
+
 BotRoby is an experimental modular mobile robot project for educational use and
 experimentation with robotics hardware and software. This repository contains
 the Raspberry Pi software, STM32 firmware, and hardware connection
