@@ -12,7 +12,7 @@ Per abilitare SSH e l'accesso remoto, è stata utilizzata l'interfaccia di confi
 sudo raspi-config
 ```
 
-> **Nota:** `amministratore` è il nome utente utilizzato su questa Raspberry Pi. Se si sceglie un nome utente diverso, occorre sostituirlo nel codice e nei riferimenti seguenti.
+> **Nota:** `pi` è il nome utente utilizzato su questa Raspberry Pi. Se si sceglie un nome utente diverso, occorre sostituirlo nel codice e nei riferimenti seguenti.
 
 ## Abilitare la modalità AP sulla Raspberry Pi
 
@@ -67,12 +67,12 @@ sudo apt update
 sudo apt install python3-flask python3-spidev
 ```
 
-## 2. CREAZIONE DELLO SCRIPT PYTHON ([spi_master_web_SPI.py](spi_master_web_SPI.py))
+## 2. CREAZIONE DELLO SCRIPT PYTHON ([spi_master_web.py](spi_master_web.py))
 
-Con le librerie Python installate è stato possibile creare l'interfaccia web di controllo: [spi_master_web_SPI.py](spi_master_web_SPI.py). È necessario renderla eseguibile:
+Con le librerie Python installate è stato possibile creare l'interfaccia web di controllo: [spi_master_web.py](spi_master_web.py). È necessario renderla eseguibile:
 
 ```bash
-chmod +x /home/amministratore/spi_master_web_SPI.py
+chmod +x /home/pi/spi_master_web.py
 ```
 
 ### 3. CONFIGURAZIONE DELL'AVVIO AUTOMATICO (servizio systemd)
@@ -93,9 +93,9 @@ Description=Robot SPI Web Controller
 After=network.target
 
 [Service]
-User=amministratore
-WorkingDirectory=/home/amministratore
-ExecStart=/usr/bin/python3 /home/amministratore/spi_master_web_SPI.py
+User=pi
+WorkingDirectory=/home/pi
+ExecStart=/usr/bin/python3 /home/pi/spi_master_web.py
 Restart=always
 RestartSec=3
 
