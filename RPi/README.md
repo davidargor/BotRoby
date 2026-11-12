@@ -12,7 +12,7 @@ SSH was enabled for remote access through the Raspberry Pi's text-based configur
 sudo raspi-config
 ```
 
-> **Note:** `amministratore` is the username used on this Raspberry Pi. If a different username is chosen, it must be replaced in the code and references below.
+> **Note:** `pi` is the username used on this Raspberry Pi. If a different username is chosen, it must be replaced in the code and references below.
 
 ## Enabling AP mode on the Raspberry Pi
 
@@ -67,12 +67,12 @@ sudo apt update
 sudo apt install python3-flask python3-spidev
 ```
 
-## 2. CREATING THE PYTHON SCRIPT ([spi_master_web_SPI.py](spi_master_web_SPI.py))
+## 2. CREATING THE PYTHON SCRIPT ([spi_master_web.py](spi_master_web.py))
 
 Using the installed Python libraries, it was possible to create the web control interface: [spi_master_web.py](spi_master_web.py). It must be made executable with:
 
 ```bash
-chmod +x /home/amministratore/spi_master_web_SPI.py
+chmod +x /home/pi/spi_master_web.py
 ```
 
 ### 3. AUTOMATIC STARTUP CONFIGURATION (systemd service)
@@ -93,9 +93,9 @@ Description=Robot SPI Web Controller
 After=network.target
 
 [Service]
-User=amministratore
-WorkingDirectory=/home/amministratore
-ExecStart=/usr/bin/python3 /home/amministratore/spi_master_web_SPI.py
+User=pi
+WorkingDirectory=/home/pi
+ExecStart=/usr/bin/python3 /home/pi/spi_master_web.py
 Restart=always
 RestartSec=3
 
