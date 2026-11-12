@@ -1,19 +1,25 @@
 #!/usr/bin/env python3
 from flask import Flask, render_template_string, request, redirect, url_for
 import spidev
+import time
+import subprocess
+import threading
 
 app = Flask(__name__)
 
-# SPI configuration
+# --- SPI CONFIGURATION ---
 spi = spidev.SpiDev()
 spi.open(0, 0)
 spi.max_speed_hz = 500000
 spi.mode = 0
 spi.bits_per_word = 8
 
-print("RPi SPI web server started...")
+print("RPi SPI WEB SERVER started...")
 
-# Mapping of web commands to SPI codes
+# Secret code to confirm shutdown (you can change it)
+SHUTDOWN_CODE = "1234"
+
+# Map web commands to SPI codes
 SPI_COMMANDS = {
     'forward': 2,     # Forward
     'backward': 3,    # Backward
@@ -26,15 +32,15 @@ SPI_COMMANDS = {
 
 
 def send_spi(cmd_code):
-    """Send the SPI packet using the same format as the Pygame script."""
+    """Send the SPI packet to the robot."""
     try:
-        packet = [0x01, cmd_code, 0]
-        spi.xfer2(packet)
-        print(f"SPI sent: {packet}")
+        packet_to_send = [0x01, int(cmd_code), 0]
+        response_from_slave = spi.xfer2(packet_to_send)
+        print(f"--> SPI SENT: {packet_to_send}")
     except Exception as e:
         print(f"SPI error: {e}")
 
-
+# HTML/CSS web interface with a shutdown button and security prompt
 HTML_PAGE = """
 <!DOCTYPE html>
 <html>
@@ -48,7 +54,7 @@ HTML_PAGE = """
             padding: 0;
             touch-action: manipulation;
         }
-
+        
         body {
             font-family: sans-serif;
             background-color: #121212;
@@ -59,6 +65,7 @@ HTML_PAGE = """
             justify-content: center;
             align-items: center;
             overflow: hidden;
+            position: relative;
         }
 
         h2 {
@@ -122,11 +129,36 @@ HTML_PAGE = """
             background-color: #263238;
             border-color: #37474F;
         }
+
+        /* Shutdown button in the top-right corner */
+        .btn-power {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background-color: #b71c1c;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+        .btn-power:active {
+            background-color: #d32f2f;
+        }
     </style>
 </head>
 <body>
 
-    <h2>Robot SPI control</h2>
+    <!-- Shutdown button -->
+    <button class="btn-power" onclick="requestShutdown()" title="Shut down Raspberry Pi">⏻</button>
+
+    <h2>SPI Robot Control</h2>
 
     <div class="controls-container">
         <div class="control-grid">
@@ -144,7 +176,6 @@ HTML_PAGE = """
     </div>
 
     <script>
-        // Use Pointer Events to unify mouse, touch and pen input without conflicts
         document.querySelectorAll('button[data-cmd]').forEach(button => {
             const cmd = button.getAttribute('data-cmd');
 
@@ -171,13 +202,36 @@ HTML_PAGE = """
         function sendAction(action) {
             let formData = new FormData();
             formData.append('direction', action);
-
+            
             fetch('/move', {
                 method: 'POST',
                 body: formData
             }).catch(error => {
-                console.error("Send error:", error);
+                console.error("Failed to send request:", error);
             });
+        }
+
+        function requestShutdown() {
+            let code = prompt("Enter the confirmation code to shut down the Raspberry Pi:");
+            if (code !== null && code !== "") {
+                let formData = new FormData();
+                formData.append('code', code);
+                
+                fetch('/shutdown', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => {
+                    if (response.ok) {
+                        alert("Correct code! The Raspberry Pi is shutting down...");
+                    } else {
+                        alert("Incorrect code! Shutdown cancelled.");
+                    }
+                })
+                .catch(error => {
+                    console.error("Network error:", error);
+                });
+            }
         }
     </script>
 
@@ -185,30 +239,41 @@ HTML_PAGE = """
 </html>
 """
 
-
 @app.route('/')
 def index():
     return render_template_string(HTML_PAGE)
-
 
 @app.route('/move', methods=['GET', 'POST'])
 def move():
     if request.method == 'GET':
         return redirect(url_for('index'))
-
+        
     direction = request.form.get('direction')
-    print(f"WEB DEBUG -> received command: {direction}")
-
-    if direction in SPI_COMMANDS:
-        cmd_code = SPI_COMMANDS[direction]
-        send_spi(cmd_code)
-
+    cmd_code = SPI_COMMANDS.get(direction, 0)
+    send_spi(cmd_code)
     return "OK", 200
 
+@app.route('/shutdown', methods=['POST'])
+def shutdown():
+    code = request.form.get('code')
+    if code == SHUTDOWN_CODE:
+        print("\nWEB DEBUG -> Correct shutdown code. System is shutting down...")
+        
+        # Delay shutdown to allow Flask to send the HTTP response first
+        def delayed_shutdown():
+            time.sleep(1)
+            subprocess.run(['sudo', 'shutdown', '-h', 'now'])
+            
+        threading.Thread(target=delayed_shutdown).start()
+        return "OK", 200
+    else:
+        print(f"\nWEB DEBUG -> Shutdown attempt failed: incorrect code entered.")
+        return "UNAUTHORIZED", 401
 
 if __name__ == '__main__':
     try:
         app.run(host='0.0.0.0', port=5000)
     except KeyboardInterrupt:
-        print("\nShutdown in progress...")
+        print("\nClosing...")
         spi.close()
+
