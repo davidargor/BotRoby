@@ -69,7 +69,7 @@ sudo apt install python3-flask python3-spidev
 
 ## 2. CREATING THE PYTHON SCRIPT ([spi_master_web_SPI.py](spi_master_web_SPI.py))
 
-Using the installed Python libraries, it was possible to create the web control interface: [spi_master_web_SPI.py](spi_master_web_SPI.py). It must be made executable with:
+Using the installed Python libraries, it was possible to create the web control interface: [spi_master_web.py](spi_master_web.py). It must be made executable with:
 
 ```bash
 chmod +x /home/amministratore/spi_master_web_SPI.py
